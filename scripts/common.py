@@ -8,7 +8,7 @@ ROOT = Path(__file__).resolve().parent.parent
 BASE = "https://wooacal.wooahouse.com"
 SITE = "우아달력"
 YEARS = [2026, 2027, 2028, 2029, 2030]
-NAVER_TOKEN = ""          # 네이버 서치어드바이저 메타태그 값(사용자 발급) — 있으면 head 에 삽입
+NAVER_TOKEN = "43804b70ac94577e4f378467e82cb5e752d726a2"          # 네이버 서치어드바이저 메타태그 값(사용자 발급) — 있으면 head 에 삽입
 TODAY_STAMP = "2026년 10월"  # 푸터 최종 수정 표기
 
 esc = html.escape
