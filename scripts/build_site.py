@@ -495,6 +495,11 @@ def page_jeolgi_index():
 # ───────────────────────── 손 없는 날 / 목적별 길일 ─────────────────────────
 SON_EXPLAIN = """<p class="lead"><b>손 없는 날</b>은 이사나 결혼, 개업처럼 중요한 일을 앞두고 사람들이 가장 먼저 찾는 날입니다. 여기서 ‘손’은 사람의 일을 방해한다고 믿어 온 귀신(악귀)을 뜻합니다. 손은 음력 날짜에 따라 움직이는 방향이 정해져 있다고 전해집니다. 음력 1·2일은 동쪽, 3·4일은 남쪽, 5·6일은 서쪽, 7·8일은 북쪽에 있고 <b>9일과 10일(그리고 19·20·29·30일)</b>은 손이 하늘로 올라가 쉬는 날이라 어느 방향으로 움직여도 방해받지 않는다고 봅니다.</p>"""
 
+# 이사 준비 연결: 대형폐기물(우아트래시)·평수 변환(우아단위)·주소 변경 관할기관(우아민원)
+MOVE_BLOCK = ('<h2 class="group-title">📦 이사 준비 체크</h2><p class="lead">날짜를 정했다면 버릴 가구·가전 처리, 새 집 평수 확인, 이사 후 주소 변경까지 이어서 챙겨 보세요.</p>'
+              '<div class="chips"><a class="chip" href="https://wooatrash.wooahouse.com/">🗑️ 대형폐기물 스티커 가격(지역별)</a><a class="chip" href="https://wooaunit.wooahouse.com/pyeong/">📐 평↔㎡ 평수 변환</a><a class="chip" href="https://wooaminwon.wooahouse.com/">🏢 이사 후 주소 변경 관할기관</a></div>')
+
+
 def page_son_year(y):
     path = "/sonnopneun-nal/%d/" % y
     rows = ""
@@ -514,6 +519,7 @@ def page_son_year(y):
 <h2 class="group-title">❓ 손 없는 날이란?</h2>%(ex)s
 <div class="chips"><a class="chip" href="/imsa/%(y)d/">%(y)d년 이사 길일</a><a class="chip" href="/gyeolhon/%(y)d/">%(y)d년 결혼 길일</a><a class="chip" href="/gaeop/%(y)d/">%(y)d년 개업 길일</a></div>
 """ % dict(y=y, c=cnt, w=wkend, p=cnt - wkend, chips="".join('<a class="chip%s" href="/sonnopneun-nal/%d/">%d년</a>' % (" on" if yy == y else "", yy, yy) for yy in YEARS), ad=ad(), t=t, ex=SON_EXPLAIN)
+    body += MOVE_BLOCK
     faq = [("%d년 손 없는 날은 며칠인가요?" % y, "%d년 손 없는 날은 총 %d일입니다. 음력으로 매달 9일·10일·19일·20일·29일·30일이 해당합니다(음력 달이 29일까지면 30일은 없습니다)." % (y, cnt)),
            ("손 없는 날은 어떻게 정하나요?", "음력 날짜의 끝자리가 9나 0인 날이 손 없는 날입니다. 양력 날짜로는 매달 비슷한 시기에 오지만 해마다 달라지므로 달력에서 확인해야 합니다."),
            ("손 없는 날에 이사하면 꼭 좋은가요?", "손 없는 날은 민간에 전해 내려오는 풍습으로 과학적 근거는 없습니다. 날짜를 정할 때 참고하되, 가족 일정과 이삿짐 업체 예약 가능 여부, 비용을 함께 고려하세요.")]
@@ -546,6 +552,7 @@ def page_son_month(y, m):
 <div class="chips"><a class="chip" href="/%(y)d/%(m2)02d/">%(m)d월 달력</a><a class="chip" href="/imsa/%(y)d/%(m2)02d/">%(m)d월 이사 길일</a><a class="chip" href="/sonnopneun-nal/%(y)d/">%(y)d년 손 없는 날</a></div>
 """ % dict(y=y, m=m, m2=m, list=", ".join("%d일(%s)" % (d.day, wd(d)) for d in sons), n=len(sons), tip=tip, grid=month_grid(y, m), ad=ad(), t=t,
            nv=_pm_nav("/sonnopneun-nal/", y, m, "손 없는 날"))
+    body += MOVE_BLOCK
     faq = [("%d년 %d월 손 없는 날은 언제인가요?" % (y, m), "%s입니다." % ", ".join("%d일(%s)" % (d.day, wd(d)) for d in sons)),
            ("%d월에 이사하기 가장 좋은 날은?" % m, ("%s이(가) 이사 대길일입니다." % ", ".join("%d일" % d.day for d in ds if E.judge(d, "imsa")[0] == "대길")) if any(E.judge(d, "imsa")[0] == "대길" for d in ds) else "이달에는 이사 ‘대길’ 등급 날이 없고, 손 없는 날 중 ‘길’ 등급을 고르세요."),
            ("손 없는 날은 비용이 더 비싼가요?", "이삿짐 업체는 손 없는 날과 주말, 월말에 수요가 몰려 같은 조건이라도 요금을 올려 받는 경우가 많습니다. 업체별로 다르니 견적을 여러 곳에서 받아 비교해 보세요.")]
@@ -642,6 +649,7 @@ def page_purpose_year(p, y):
 <div class="chips"><a class="chip" href="/sonnopneun-nal/%(y)d/">%(y)d년 손 없는 날</a><a class="chip" href="/%(y)d/">%(y)d년 공휴일</a><a class="chip" href="/%(p)s/">%(lb)s 길일 설명</a></div>
 """ % dict(y=y, lb=label, tot=total, wk=wkend, wd_=total - wkend, intro=intro, tip=tip, p=p, ad=ad(), t=t,
            chips="".join('<a class="chip%s" href="/%s/%d/">%d년</a>' % (" on" if yy == y else "", p, yy, yy) for yy in YEARS))
+    if p == "imsa": body += MOVE_BLOCK
     faq = [("%d년 %s하기 좋은 날은 언제인가요?" % (y, label), "%d년 %s 대길일은 총 %d일입니다. 월별 표에서 월을 눌러 대길일과 길일의 상세 사유를 확인하세요." % (y, label, total)),
            ("평일 %s 길일을 고르려면?" % label, "월별 표에서 빨강(일요일)·파랑(토요일)이 아닌 날짜가 평일입니다. 공휴일은 날짜 페이지에서 확인할 수 있습니다."),
            ("길일이 아닌 날에 %s하면 안 되나요?" % label, "그렇지 않습니다. 풍습에 따른 참고 정보일 뿐이며 현실적인 일정과 비용을 우선하세요.")]
@@ -675,6 +683,7 @@ def page_purpose_month(p, y, m):
 <div class="chips"><a class="chip" href="/%(y)d/%(m2)02d/">%(m)d월 달력</a><a class="chip" href="/sonnopneun-nal/%(y)d/%(m2)02d/">%(m)d월 손 없는 날</a><a class="chip" href="/%(p)s/%(y)d/">%(y)d년 %(lb)s 길일</a></div>
 """ % dict(y=y, m=m, m2=m, lb=label, nb=len(best), ng=len(good), na=len(avoid), lead=lead, grid=month_grid(y, m), ad=ad(), t=t, intro=intro,
            avoid=("; ".join("%s(%s)" % (fmtw(d, False), E.judge(d, p)[2][0]) for d in avoid[:8]) or "없습니다") , nv=_pm_nav("/%s/" % p, y, m, label + " 길일"), p=p)
+    if p == "imsa": body += MOVE_BLOCK
     faq = [("%d년 %d월 %s 길일은 언제인가요?" % (y, m, label), "대길일은 %s입니다." % (", ".join("%d일(%s)" % (d.day, wd(d)) for d in best) or "없습니다")),
            ("%d월 주말 %s 길일이 있나요?" % (m, label), ("있습니다. %s입니다." % ", ".join("%d일(%s)" % (d.day, wd(d)) for d in wk_best)) if wk_best else "이달 대길일 중 주말·공휴일은 없습니다."),
            ("등급은 어떻게 매기나요?", "건제 12신, 황도·흑도일, 손 없는 날, 삼궁일을 점수화한 참고 등급입니다. 자세한 계산 기준은 계산 기준 페이지를 확인하세요.")]
